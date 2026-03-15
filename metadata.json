@@ -1,0 +1,5 @@
+{
+  "name": "VAE Customer Generator",
+  "description": "A dashboard explaining and simulating a Variational Autoencoder for synthetic customer data generation.",
+  "requestFramePermissions": []
+}
