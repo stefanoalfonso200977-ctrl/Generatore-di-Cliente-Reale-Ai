@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Code2, Network, Database, Play, Download, CheckCircle2, FileJson } from 'lucide-react';
+import { Code2, Network, Database, Play, Download, CheckCircle2, FileJson, FileSpreadsheet } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import * as XLSX from 'xlsx';
 
 const PYTHON_CODE = `import pandas as pd
 import numpy as np
@@ -228,6 +229,21 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const exportToExcel = () => {
+    if (syntheticData.length === 0) return;
+    
+    // Rimuovi l'ID interno dai dati prima di esportare
+    const dataToExport = syntheticData.map(({ id, ...rest }) => rest);
+    
+    // Crea il foglio di lavoro e la cartella di lavoro
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Clienti Sintetici");
+    
+    // Salva il file
+    XLSX.writeFile(workbook, `clienti_sintetici_${syntheticData.length}.xlsx`);
   };
 
   const generateMockData = (n: number) => {
@@ -480,13 +496,22 @@ export default function App() {
                   </div>
                   <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-between items-center">
                     <span className="text-sm text-slate-500">Mostrando {syntheticData.length} clienti generati</span>
-                    <button 
-                      onClick={exportToCSV}
-                      className="flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100 hover:bg-indigo-100"
-                    >
-                      <Download size={16} />
-                      Esporta CSV
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={exportToCSV}
+                        className="flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100 hover:bg-indigo-100"
+                      >
+                        <Download size={16} />
+                        CSV
+                      </button>
+                      <button 
+                        onClick={exportToExcel}
+                        className="flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors bg-emerald-50 px-4 py-2 rounded-lg border border-emerald-100 hover:bg-emerald-100"
+                      >
+                        <FileSpreadsheet size={16} />
+                        Excel
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
